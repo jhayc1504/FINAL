@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Driver Dashboard</title>
+  <style>
+    body { font-family: Arial; padding: 20px; }
+    button { margin-right: 10px; }
+
+      body {
+        
+        font-family: Arial, sans-serif;
+        background-color: white;
+        color: black;
+        padding: 40px;
+        max-width: 600px;
+        margin: auto;
+        border-radius: 8px;
+        box-shadow: 0 0 10px gray;
+    }
+
+    h1 {
+        color: blue;
+        margin-bottom: 20px;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 10px;
+    }
+
+    input[type="text"] {
+        width: 100%;
+        padding: 10px;
+        margin-top: 5px;
+        margin-bottom: 15px;
+        border: 1px solid silver;
+        border-radius: 5px;
+        box-sizing: border-box;
+    }
+
+    button {
+        padding: 10px 20px;
+        background-color: blue;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background-color: navy;
+    }
+
+    #status {
+        margin-top: 20px;
+        font-weight: bold;
+    }
+
+    #bookingDetails p {
+        margin: 10px 0;
+    }
+
+    #actions {
+        margin-top: 20px;
+    }
+   
+  </style>
+</head>
+<body>
+  <h1>Booking- Driver</h1>
+  <div id="bookingDetails">
+    <p>No booking yet...</p>
+  </div>
+
+  <div id="actions" style="display:none;">
+    <button onclick="respond('Accepted')">Accept</button>
+    <button onclick="respond('Declined')">Decline</button>
+  </div>
+
+  <script>
+    function loadBooking() {
+      const booking = JSON.parse(localStorage.getItem('Booking'));
+      const detailsDiv = document.getElementById('bookingDetails');
+      const actionsDiv = document.getElementById('actions');
+
+      if (booking && booking.status === "Pending") {
+        detailsDiv.innerHTML = `
+          <p><strong>Pickup:</strong> ${booking.pickup}</p>
+          <p><strong>Destination:</strong> ${booking.destination}</p>
+          <p><strong>Landmark:</strong> ${booking.mark}</p>
+          <p><strong>Number of Passengers:</strong> ${booking.passengers}</p>
+          <p><strong>Commuter Type:</strong> ${booking.commuterType}</p>
+          <p><strong>Regular Passengers Boarding:</strong> ${booking.regularBoarding}</p>
+          <p><strong>Student/SC/PWD Passengers Boarding:</strong> ${booking.studentBoarding}</p>
+          <p><strong>Estimated Fare:</strong> ₱${booking.estimatedFare}</p>
+          <p><strong>Status:</strong> ${booking.status}</p>
+        `;
+        actionsDiv.style.display = "block";
+      } else if (booking && booking.status === "Accepted") {
+        detailsDiv.innerHTML = `
+          <p><strong>Pickup:</strong> ${booking.pickup}</p>
+          <p><strong>Destination:</strong> ${booking.destination}</p>
+          <p><strong>Landmark:</strong> ${booking.mark}</p>
+          <p><strong>Number of Passengers:</strong> ${booking.passengers}</p>
+          <p><strong>Commuter Type:</strong> ${booking.commuterType}</p>
+          <p><strong>Regular Passengers Boarding:</strong> ${booking.regularBoarding}</p>
+          <p><strong>Student/SC/PWD Passengers Boarding:</strong> ${booking.studentBoarding}</p>
+          <p><strong>Status:</strong> ${booking.status}</p>
+          <p><strong>Fare:</strong> ₱${booking.fare}</p>
+        `;
+        actionsDiv.style.display = "none";
+        // Add link to active booking
+        detailsDiv.innerHTML += `<br><button onclick="window.location.href='driver_active_booking.html'">View Active Booking</button>`;
+      } else if (booking && booking.status === "Completed") {
+        detailsDiv.innerHTML = "<p>No booking yet...</p>";
+        actionsDiv.style.display = "none";
+      } else {
+        detailsDiv.innerHTML = "<p>No booking or already responded.</p>";
+        actionsDiv.style.display = "none";
+      }
+    }
+
+    function respond(status) {
+      const booking = JSON.parse(localStorage.getItem('Booking'));
+
+      if (booking) {
+        booking.status = status;
+        if (status === "Accepted") {
+          let fare = 0;
+          if (booking.commuterType === 'Regular') {
+            fare = booking.regularBoarding * 20;
+          } else if (booking.commuterType === 'Student/SC/PWD') {
+            fare = booking.studentBoarding * 15;
+          } else if (booking.commuterType === 'Both') {
+            fare = booking.regularBoarding * 20 + booking.studentBoarding * 15;
+          }
+          booking.fare = fare;
+          // Update DB status to Accepted
+          fetch('update_booking_status.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ booking_id: booking.booking_id, status: 'Accepted', fare: fare })
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              alert('Booking accepted!');
+            } else {
+              alert('Error: ' + data.message);
+            }
+          });
+        }
+        localStorage.setItem('Booking', JSON.stringify(booking));
+        loadBooking();
+      }
+    }
+
+    setInterval(loadBooking, 1000);
+  </script>
+</body>
+</html>

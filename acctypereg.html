@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<style>
+    *{
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Poppins",serif;
+    }
+    body {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        color: #333;
+    }
+    .container{
+        margin: 0 15px;
+    }
+
+    button{
+        width: 100%;
+        padding: 12px;
+        background: #7494ec;
+        border-radius: 6px;
+        border: none;
+        cursor: pointer;
+        font-size: 16px;
+        color: #fff;
+        font-weight: 500;
+        margin-bottom: 20px;
+        transition: 0.5s;
+    }
+
+    button a{
+        text-decoration: none;
+        color: #eee;
+    }
+
+    button:hover{
+        background: #6884d3;
+        }
+</style>
+
+<body>
+    <div class="selection" id="select-form">
+            <button type="submit" name="commuter_register"><a href="commuter_register.php">Commuter</a></button>
+            <button type="submit" name="driver_register"><a href="driver_register.php">Driver</a></button>
+            <p>Already have an account? <a href="index.html">login</a></p>
+        </div>
+</body>
+</html>

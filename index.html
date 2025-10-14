@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@400;0,500;700;&display=swap');
+    *{
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Poppins",serif;
+    }
+    body {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        color: #333;
+    }
+    .container{
+        margin: 0 15px;
+    }
+
+    .form-box, .selection {
+       width: 100%;
+       max-width: 450px; 
+       padding: 10px;
+       background-color: whitesmoke;
+       border-radius: 10px;
+       box-shadow: 0 0 1 rgba(0, 0, 0, 0.1);
+       display: none;
+    }
+
+    .form-box.active{
+        display: block;
+    }
+
+    H2{
+        font-size: 34px;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    input{
+        width: 100%;
+        padding: 12px;
+        background: #eee;
+        border-radius: 6px;
+        border: none;
+        outline: none;
+        font-size: 16px;
+        color: #333;
+        margin-bottom: 20px;
+    }
+
+    button{
+        width: 100%;
+        padding: 12px;
+        background: #7494ec;
+        border-radius: 6px;
+        border: none;
+        cursor: pointer;
+        font-size: 16px;
+        color: #fff;
+        font-weight: 500;
+        margin-bottom: 20px;
+        transition: 0.5s;
+    }
+
+    button:hover{
+        background: #6884d3;
+    }
+    p{
+        font-size: 14.5px;
+        text-align: center;
+        margin-bottom: 10px;
+    }
+
+    p a{
+        color: #7474ec;
+        text-decoration: none;
+    }
+
+    p a:hover{
+        text-decoration: underline;
+    }
+
+    button a{
+        text-decoration: none;
+        color: #eee;
+    }
+
+    .error-message{
+        padding: 12px;
+        background: #f8d7da;
+        border-radius: 6px;
+        font-size: 16px;
+        color: #a42384;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+</style>
+
+<body>
+    <div class="container">
+        <div class="form-box active" id="login-form">
+            <form action="login.php" method="post">
+                <H2>Login</H2> 
+                <input type="email" name="email" placeholder="Email" required>
+                <input type="password" name="password" placeholder="Password" required>
+                <button type="submit" name="login">Login</button>
+                <p>Don't have an account? <a href="acctypereg.html">Register</a></p>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

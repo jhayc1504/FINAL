@@ -1,0 +1,83 @@
+    <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Driver Active Booking</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .booking-details { border: 1px solid #ccc; padding: 20px; margin-bottom: 20px; }
+        .billing { border: 1px solid #ccc; padding: 20px; }
+    </style>
+</head>
+<body>
+    <h1>Active Booking</h1>
+    <div id="bookingDetails">
+        <p>Loading...</p>
+    </div>
+
+    <script>
+        function loadActiveBooking() {
+            fetch('get_driver_active_booking.php')
+                .then(response => response.json())
+                .then(data => {
+                    const detailsDiv = document.getElementById('bookingDetails');
+                    if (data.success) {
+                        const booking = data.booking;
+                        detailsDiv.innerHTML = `
+                            <div class="booking-details">
+                                <h2>Booking Details</h2>
+                                <p><strong>Pickup:</strong> ${booking.pickup}</p>
+                                <p><strong>Destination:</strong> ${booking.destination}</p>
+                                <p><strong>Landmark:</strong> ${booking.landmark}</p>
+                                <p><strong>Commuter Type:</strong> ${booking.commuter_type}</p>
+                                <p><strong>Regular Passengers:</strong> ${booking.number_regular}</p>
+                                <p><strong>Student/SC/PWD Passengers:</strong> ${booking.number_student}</p>
+                                <p><strong>Status:</strong> ${booking.status}</p>
+                            </div>
+                            <div class="billing">
+                                <h2>Billing</h2>
+                                <p><strong>Booking ID:</strong> ${booking.id}</p>
+                                <p><strong>Commuter Name:</strong> ${booking.commuter_name}</p>
+                                <p><strong>Number of Commuters:</strong> ${booking.number_regular + booking.number_student}</p>
+                                <p><strong>Total Payment:</strong> ₱${booking.fare}</p>
+                                <button onclick="completeBooking(${booking.id})">Complete Booking</button>
+                            </div>
+                        `;
+                    } else {
+                        detailsDiv.innerHTML = "<p>No active booking found.</p>";
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading active booking:', error);
+                    document.getElementById('bookingDetails').innerHTML = "<p>Error loading booking.</p>";
+                });
+        }
+
+        function completeBooking(bookingId) {
+            if (confirm('Are you sure you want to complete the booking?')) {
+                fetch('complete_booking.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ booking_id: bookingId })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Booking completed!');
+                        window.location.href = 'home_driver.html';
+                    } else {
+                        alert('Error: ' + data.message);
+                    }
+                });
+            }
+        }
+        // Poll for status changes
+        setInterval(() => {
+            loadActiveBooking();
+        }, 2000);
+
+        loadActiveBooking();
+    </script>
+</body>
+</html>
