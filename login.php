@@ -40,9 +40,14 @@ if(isset($_POST['login'])) {
             $_SESSION['email'] = $user['email'];
             $_SESSION['acctype'] = $user['acctype'];
 
-            if ($user['acctype'] === 'commuter'){
+            // Set role-specific user_id
+            if ($user['acctype'] === 'commuter') {
+                $_SESSION['commuter_user_id'] = $user['id'];
+                unset($_SESSION['driver_user_id']); // Ensure no cross-contamination
                 header("Location: home_commuter.html");
             } else {
+                $_SESSION['driver_user_id'] = $user['id'];
+                unset($_SESSION['commuter_user_id']); // Ensure no cross-contamination
                 header("Location: home_driver.php");
             }
             exit();

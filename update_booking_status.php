@@ -18,7 +18,7 @@ if (!$data || !isset($data['booking_id']) || !isset($data['status'])) {
 $booking_id = (int)$data['booking_id'];
 $status = trim($data['status']);
 $fare = isset($data['fare']) ? (float)$data['fare'] : 0;
-$user_id = $_SESSION['user_id'];
+$user_id = $_SESSION['driver_user_id'] ?? $_SESSION['user_id'];
 
 // Validate status
 $valid_statuses = ['Pending', 'Accepted', 'Completed', 'Declined'];
@@ -54,11 +54,43 @@ if ($result->num_rows === 0) {
 $current_status = $result->fetch_assoc()['status'];
 $stmt->close();
 
+
+
 // Business logic validation
-if ($status === 'Accepted' && $current_status !== 'Pending') {
-    echo json_encode(['success' => false, 'message' => 'Can only accept pending bookings']);
-    $conn->close();
-    exit();
+if ($status === 'Accepted') {
+    // Ensure only drivers can accept bookings
+    if ($_SESSION['acctype'] !== 'driver') {
+        echo json_encode(['success' => false, 'message' => 'Only drivers can accept bookings']);
+        $conn->close();
+        exit();
+    }
+
+    // Prevent accepting own booking
+    $check_commuter_sql = "SELECT commuter_id FROM bookings WHERE id = ?";
+    $stmt_check = $conn->prepare($check_commuter_sql);
+    if (!$stmt_check) {
+        echo json_encode(['success' => false, 'message' => 'Prepare failed: ' . $conn->error]);
+        exit();
+    }
+    $stmt_check->bind_param("i", $booking_id);
+    $stmt_check->execute();
+    $result_check = $stmt_check->get_result();
+    if ($result_check->num_rows > 0) {
+        $commuter_id = $result_check->fetch_assoc()['commuter_id'];
+        if ($commuter_id == $user_id) {
+            echo json_encode(['success' => false, 'message' => 'Cannot accept your own booking']);
+            $stmt_check->close();
+            $conn->close();
+            exit();
+        }
+    }
+    $stmt_check->close();
+
+    if ($current_status !== 'Pending') {
+        echo json_encode(['success' => false, 'message' => 'Can only accept pending bookings']);
+        $conn->close();
+        exit();
+    }
 }
 
 if ($status === 'Completed' && $current_status !== 'Accepted') {

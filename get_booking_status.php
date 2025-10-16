@@ -12,7 +12,9 @@ if (!$data || !isset($data['booking_id']) || !is_numeric($data['booking_id'])) {
 
 $booking_id = (int)$data['booking_id'];
 
-$sql = "SELECT b.*, CONCAT(u.firstname, ' ', u.lastname) as commuter_name FROM bookings b JOIN users u ON b.commuter_id = u.id WHERE b.id = ?";
+$user_id = $_SESSION['commuter_user_id'] ?? $_SESSION['user_id'];
+
+$sql = "SELECT b.*, CONCAT(u.firstname, ' ', u.lastname) as commuter_name FROM bookings b JOIN users u ON b.commuter_id = u.id WHERE b.id = ? AND b.commuter_id = ?";
 
 $stmt = $conn->prepare($sql);
 if (!$stmt) {
@@ -20,7 +22,7 @@ if (!$stmt) {
     exit;
 }
 
-$stmt->bind_param("i", $booking_id);
+$stmt->bind_param("ii", $booking_id, $user_id);
 $stmt->execute();
 $result = $stmt->get_result();
 

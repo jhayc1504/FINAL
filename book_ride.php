@@ -2,6 +2,7 @@
 session_start();
 include 'config.php';
 
+
 if ($conn->connect_error) {
     echo json_encode(['success' => false, 'message' => 'DB connection failed: ' . $conn->connect_error]);
     exit;
