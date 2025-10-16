@@ -1,6 +1,7 @@
 <?php
 session_start();
 
+// Prevent caching to ensure logout works properly
 header("Cache-Control: no-cache, no-store, must-revalidate");
 header("Pragma: no-cache");
 header("Expires: 0");
@@ -17,10 +18,12 @@ if (isset($_SESSION['email'])) {
 $errors = $_SESSION['login_error'] ?? '';
 $activeForm = $_SESSION['active_form'] ?? 'login';
 
-session_unset();
+// Clear session variables after use
+unset($_SESSION['login_error']);
+unset($_SESSION['active_form']);
 
 function showError($error){
-    return !empty($error) ? "<p class='error-message'>$error</p>" : '';
+    return !empty($error) ? "<p class='error-message'>" . htmlspecialchars($error) . "</p>" : '';
 }
 
 function isActiveForm($formName, $activeForm) {
@@ -33,7 +36,7 @@ function isActiveForm($formName, $activeForm) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Pasada.com - Login</title>
 </head>
 
 <style>
@@ -61,7 +64,7 @@ function isActiveForm($formName, $activeForm) {
        padding: 10px;
        background-color: whitesmoke;
        border-radius: 10px;
-       box-shadow: 0 0 1 rgba(0, 0, 0, 0.1);
+       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
        display: none;
     }
 

@@ -8,23 +8,90 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 $data = json_decode(file_get_contents('php://input'), true);
-$booking_id = (int)$data['booking_id'];
-$status = $conn->real_escape_string($data['status']);
-$fare = isset($data['fare']) ? (float)$data['fare'] : 0;
 
-$user_id = $_SESSION['user_id'];
-
-if ($status === 'Accepted') {
-    $sql = "UPDATE bookings SET status = '$status', fare = $fare, driver_id = $user_id WHERE id = $booking_id";
-} else {
-    $sql = "UPDATE bookings SET status = '$status', fare = $fare WHERE id = $booking_id";
+// Input validation
+if (!$data || !isset($data['booking_id']) || !isset($data['status'])) {
+    echo json_encode(['success' => false, 'message' => 'Missing required fields']);
+    exit();
 }
 
-if ($conn->query($sql) === TRUE) {
+$booking_id = (int)$data['booking_id'];
+$status = trim($data['status']);
+$fare = isset($data['fare']) ? (float)$data['fare'] : 0;
+$user_id = $_SESSION['user_id'];
+
+// Validate status
+$valid_statuses = ['Pending', 'Accepted', 'Completed', 'Declined'];
+if (!in_array($status, $valid_statuses)) {
+    echo json_encode(['success' => false, 'message' => 'Invalid status']);
+    exit();
+}
+
+// Validate fare
+if ($fare < 0) {
+    echo json_encode(['success' => false, 'message' => 'Invalid fare']);
+    exit();
+}
+
+// Check if booking exists and is in correct state for update
+$check_sql = "SELECT status FROM bookings WHERE id = ?";
+$stmt = $conn->prepare($check_sql);
+if (!$stmt) {
+    echo json_encode(['success' => false, 'message' => 'Prepare failed: ' . $conn->error]);
+    exit();
+}
+$stmt->bind_param("i", $booking_id);
+$stmt->execute();
+$result = $stmt->get_result();
+
+if ($result->num_rows === 0) {
+    echo json_encode(['success' => false, 'message' => 'Booking not found']);
+    $stmt->close();
+    $conn->close();
+    exit();
+}
+
+$current_status = $result->fetch_assoc()['status'];
+$stmt->close();
+
+// Business logic validation
+if ($status === 'Accepted' && $current_status !== 'Pending') {
+    echo json_encode(['success' => false, 'message' => 'Can only accept pending bookings']);
+    $conn->close();
+    exit();
+}
+
+if ($status === 'Completed' && $current_status !== 'Accepted') {
+    echo json_encode(['success' => false, 'message' => 'Can only complete accepted bookings']);
+    $conn->close();
+    exit();
+}
+
+// Update booking
+if ($status === 'Accepted') {
+    $update_sql = "UPDATE bookings SET status = ?, fare = ?, driver_id = ? WHERE id = ?";
+    $stmt = $conn->prepare($update_sql);
+    if (!$stmt) {
+        echo json_encode(['success' => false, 'message' => 'Prepare failed: ' . $conn->error]);
+        exit();
+    }
+    $stmt->bind_param("sdii", $status, $fare, $user_id, $booking_id);
+} else {
+    $update_sql = "UPDATE bookings SET status = ?, fare = ? WHERE id = ?";
+    $stmt = $conn->prepare($update_sql);
+    if (!$stmt) {
+        echo json_encode(['success' => false, 'message' => 'Prepare failed: ' . $conn->error]);
+        exit();
+    }
+    $stmt->bind_param("sdi", $status, $fare, $booking_id);
+}
+
+if ($stmt->execute()) {
     echo json_encode(['success' => true]);
 } else {
     echo json_encode(['success' => false, 'message' => $conn->error]);
 }
 
+$stmt->close();
 $conn->close();
 ?>

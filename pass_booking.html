@@ -12,45 +12,44 @@
     input, button { margin-top: 10px; display: block; }
 
     body {
-        
-        font-family: Arial, sans-serif;
-        background: #4300FF, #0065F8, #00CAFF, #00FFDE;
-        color: black;
-        padding: 0px;
-        max-width: 100%;
-        margin: 0;
-        border-radius: 8px;
-        justify-content: center;
+      font-family: Arial, sans-serif;
+      background: #4300FF, #0065F8, #00CAFF, #00FFDE;
+      color: black;
+      padding: 0px;
+      max-width: 100%;
+      margin: 0;
+      border-radius: 8px;
+      justify-content: center;
         
     }
 
     h1 {
-        color: blue;
-        margin-bottom: 20px;
+      color: blue;
+      margin-bottom: 20px;
     }
 
     label {
-        display: block;
-        margin-bottom: 10px;
+      display: block;
+      margin-bottom: 10px;
     }
 
     input[type="text"] {
-        width: 100%;
-        padding: 10px;
-        margin-top: 5px;
-        margin-bottom: 15px;
-        border: 1px solid silver;
-        border-radius: 5px;
-        box-sizing: border-box;
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      margin-bottom: 15px;
+      border: 1px solid silver;
+      border-radius: 5px;
+      box-sizing: border-box;
     }
 
     button {
-        padding: 10px 20px;
-        background-color: blue;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
+      padding: 10px 20px;
+      background-color: blue;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
     }
 
     button:hover {
@@ -58,116 +57,147 @@
     }
 
     #status {
-        margin-top: 20px;
-        font-weight: bold;
+      margin-top: 20px;
+      font-weight: bold;
     }
 
     #bookingDetails p {
-        margin: 10px 0;
+      margin: 10px 0;
     }
 
     #actions {
-        margin-top: 20px;
+      margin-top: 20px;
     }
 
 
     .navbar {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        background-color: #333;
-        height: 35px;
-        padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #333;
+      height: 35px;
+      padding: 10px 20px;
     }
 
 
     .navbar .hamburger {
-        display: none;
-        flex-direction: column;
-        cursor: pointer;
-        margin-left: auto;
+      display: none;
+      flex-direction: column;
+      cursor: pointer;
+      margin-left: auto;
     }
 
     .branding {
-        color: white;
-        font-size: 24px;
-        text-decoration: none;
+      color: white;
+      font-size: 24px;
+      text-decoration: none;
     }
 
     .navMenu {
-        list-style: none;
-        display: flex;
+      list-style: none;
+      display: flex;
     }
 
     .navMenu li {
-        margin-left: 20px;
+      margin-left: 20px;
     }
 
     .navlink {
-        color: white;
-        text-decoration: none;
-        font-size: 18px;
+      color: white;
+      text-decoration: none;
+      font-size: 18px;
     }
 
     .navlink:hover {
-        text-decoration: underline;
+      text-decoration: underline;
     }
 
     .bar {
-        height: 3px;
-        width: 25px;
-        background-color: white;
-        margin: 4px 0;
-        border-radius: 2px;
-        transition: 0.3s;
+      height: 3px;
+      width: 25px;
+      background-color: white;
+      margin: 4px 0;
+      border-radius: 2px;
+      transition: 0.3s;
     }
 
     @media (max-width: 768px) {
         .navMenu {
-            position: fixed;
-            top: 35px;
-            right: -100%;
-            height: 100vh;
-            width: 200px;
-            background-color: #333;
-            flex-direction: column;
-            align-items: start;
-            padding-top: 20px;
-            transition: right 0.3s ease-in-out;
-            z-index: 10;
+          position: fixed;
+          top: 35px;
+          right: -100%;
+          height: 100vh;
+          width: 200px;
+          background-color: #333;
+          flex-direction: column;
+          align-items: start;
+          padding-top: 20px;
+          transition: right 0.3s ease-in-out;
+          z-index: 10;
         }
 
         .navMenu.active {
-            right: 0;
+          right: 0;
         }
 
         .navMenu li {
-            margin: 15px 20px;
+          margin: 15px 20px;
         }
 
         .navbar .hamburger {
-            display: flex;
-            margin-left: 20px;
+          display: flex;
+          margin-left: 20px;
         }
 
     
         .hamburger.active .bar:nth-child(1) {
-            transform: rotate(45deg) translate(8px, 8px);
+          transform: rotate(45deg) translate(8px, 8px);
         }
 
         .hamburger.active .bar:nth-child(2) {
-            opacity: 0;
+          opacity: 0;
         }
 
         .hamburger.active .bar:nth-child(3) {
-            transform: rotate(-45deg) translate(8px, -8px);
+          transform: rotate(-45deg) translate(8px, -8px);
         }
 
     }
 
     .form{
-        margin: 10px;
+      margin: 10px;
     }
+
+    #commuterType {
+      white-space: nowrap;    
+    }
+
+    #commuterType input[type="radio"] {
+      margin: 0 12px 0 16px; 
+    }
+
+    .radio-group {
+      display: flex;
+      align-items: center;
+      gap: 16px;        
+      flex-wrap: wrap;   
+}
+
+    .radio-option {
+      padding-top: 10px;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 6px;           
+      cursor: pointer;    
+    }
+
+    .group-label {
+      padding-top: 3px;
+      font-weight: 600;
+      margin-right: 4px;
+    }
+
 
   </style>
 
@@ -214,12 +244,21 @@
             <input type="text" id="destination" placeholder="e.g. P.Gomez">
         </label>
 
-        <label>
-            Commuter Type:
-            <input type="radio" name="commuterType" value="Regular"> Regular
-            <input type="radio" name="commuterType" value="Student/SC/PWD"> Student/SC/PWD
-            <input type="radio" name="commuterType" value="Both"> Both
-        </label>
+        <div class="radio-group">
+          <span class="group-label">Commuter Type:</span>
+            <label class="radio-option">
+            <input type="radio" name="commuterType" value="Regular">
+          <span>Regular</span>
+          </label>
+          <label class="radio-option">
+            <input type="radio" name="commuterType" value="Student/SC/PWD">
+            <span>Student/SC/PWD</span>
+          </label>
+          <label class="radio-option">
+            <input type="radio" name="commuterType" value="Both">
+            <span>Both</span>
+          </label>
+      </div>
 
         <div id="regularBoardingDiv" style="display:none;">
             <label>
@@ -338,12 +377,16 @@
       const booking = JSON.parse(localStorage.getItem('Booking'));
       if (booking && booking.booking_id) {
         // Fetch latest status from DB
-        fetch('get_booking_status.php?booking_id=' + booking.booking_id)
+        fetch('get_booking_status.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ booking_id: booking.booking_id })
+        })
           .then(response => response.json())
           .then(data => {
             if (data.success) {
-              booking.status = data.status;
-              booking.fare = data.fare;
+              booking.status = data.booking.status;
+              booking.fare = data.booking.fare;
               localStorage.setItem('Booking', JSON.stringify(booking));
             }
           })
@@ -353,9 +396,9 @@
       if (booking?.status && booking.status !== "Pending" && booking.status !== "Completed") {
         let message = `Driver has ${booking.status.toLowerCase()} your request.`;
 
-        if (booking.status === "Accepted" && booking.fare) {
-          message += `\nYou will need to pay ₱${booking.fare}.`;
-          // Add button to go to active booking
+        if (booking.status === "Accepted") {
+          message += `\nYou will need to pay ₱${booking.fare ? booking.fare : 'calculating...'}.`;
+          // Add button to view active booking
           message += `<br><button onclick="window.location.href='active_booking.php'">View Active Booking</button>`;
         }
         document.getElementById('status').innerHTML = message;

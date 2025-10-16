@@ -1,4 +1,6 @@
 <?php
+
+include "config.php";
 session_start();
 if (!isset($_SESSION['email'])) {
     header("Location: index.php");
@@ -130,7 +132,7 @@ if (!isset($_SESSION['email'])) {
                 </li>
 
                 <li>
-                    <a href="#" class="navlink">Booking</a>
+                    <a href="driver_accept.html" class="navlink">Booking</a>
                 </li>
 
                 <li>
@@ -140,9 +142,90 @@ if (!isset($_SESSION['email'])) {
         </nav>
     </header>
 
-    <H1>Wellcome to Pasada.com
-        this is the driver hpmepage 
+    <H1>Welcome to Pasada.com
+        this is the driver homepage
     </H1>
+
+    <div id="pendingBookings">
+        <h2>Available Bookings</h2>
+        <div id="bookingsList">
+            <p>Loading...</p>
+        </div>
+    </div>
+
+    <script>
+        function loadPendingBookings() {
+            fetch('get_all_pending_bookings.php')
+                .then(response => response.json())
+                .then(data => {
+                    const listDiv = document.getElementById('bookingsList');
+                    if (data.success && data.bookings.length > 0) {
+                        let html = '';
+                        data.bookings.forEach(booking => {
+                            html += `
+                                <div style="border: 1px solid #ccc; padding: 10px; margin: 10px 0;">
+                                    <p><strong>Pickup:</strong> ${booking.pickup}</p>
+                                    <p><strong>Destination:</strong> ${booking.destination}</p>
+                                    <p><strong>Landmark:</strong> ${booking.landmark}</p>
+                                    <p><strong>Commuter Type:</strong> ${booking.commuter_type}</p>
+                                    <p><strong>Regular Passengers:</strong> ${booking.number_regular}</p>
+                                    <p><strong>Student/SC/PWD Passengers:</strong> ${booking.number_student}</p>
+                                    <p><strong>Estimated Fare:</strong> ₱${booking.estimatedFare}</p>
+                                    <button onclick="acceptBooking(${booking.booking_id})">Accept</button>
+                                </div>
+                            `;
+                        });
+                        listDiv.innerHTML = html;
+                    } else {
+                        listDiv.innerHTML = '<p>No pending bookings available.</p>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading bookings:', error);
+                    document.getElementById('bookingsList').innerHTML = '<p>Error loading bookings.</p>';
+                });
+        }
+
+        function acceptBooking(bookingId) {
+            // Calculate fare (same logic as before)
+            fetch('get_all_pending_bookings.php')
+                .then(response => response.json())
+                .then(data => {
+                    const booking = data.bookings.find(b => b.booking_id === bookingId);
+                    if (booking) {
+                        let fare = 0;
+                        if (booking.commuter_type === 'Regular') {
+                            fare = booking.number_regular * 20;
+                        } else if (booking.commuter_type === 'Student/SC/PWD') {
+                            fare = booking.number_student * 15;
+                        } else if (booking.commuter_type === 'Both') {
+                            fare = booking.number_regular * 20 + booking.number_student * 15;
+                        }
+                        // Update status to Accepted
+                        fetch('update_booking_status.php', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ booking_id: bookingId, status: 'Accepted', fare: fare })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                alert('Booking accepted!');
+                                window.location.href = 'driver_accept.html';
+                            } else {
+                                alert('Error: ' + data.message);
+                            }
+                        });
+                    }
+                });
+        }
+
+        // Load bookings on page load
+        loadPendingBookings();
+
+        // Poll for new bookings every 5 seconds
+        setInterval(loadPendingBookings, 5000);
+    </script>
 
     <script src="script.js"></script>
 </body>

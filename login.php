@@ -3,10 +3,35 @@ session_start();
 include 'config.php';
 
 if(isset($_POST['login'])) {
-    $email = $conn->real_escape_string($_POST['email']);
+    $email = trim($_POST['email']);
     $password = $_POST['password'];
 
-    $result = $conn->query("SELECT * FROM users WHERE email = '$email'");
+    // Input validation
+    if (empty($email) || empty($password)) {
+        $_SESSION['login_error'] = 'Please fill in all fields';
+        header("Location: index.php");
+        exit();
+    }
+
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $_SESSION['login_error'] = 'Invalid email format';
+        header("Location: index.php");
+        exit();
+    }
+
+    // Use prepared statement
+    $sql = "SELECT id, firstname, lastname, email, password, acctype FROM users WHERE email = ?";
+    $stmt = $conn->prepare($sql);
+    if (!$stmt) {
+        $_SESSION['login_error'] = 'Database error';
+        header("Location: index.php");
+        exit();
+    }
+
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
     if($result->num_rows > 0) {
         $user = $result->fetch_assoc();
         if (password_verify($password, $user['password'])) {
@@ -18,15 +43,19 @@ if(isset($_POST['login'])) {
             if ($user['acctype'] === 'commuter'){
                 header("Location: home_commuter.html");
             } else {
-                header("Location: home_driver.html");
+                header("Location: home_driver.php");
             }
             exit();
+        } else {
+            $_SESSION['login_error'] = 'Incorrect email or password';
+            header("Location: index.php");
+            exit();
         }
+    } else {
+        $_SESSION['login_error'] = 'Incorrect email or password';
+        header("Location: index.php");
+        exit();
     }
-
-    $_SESSION['login_error'] = 'Incorrect email or password';
-    header("Location: index.php");
-    exit();
 }
 
 ?>
