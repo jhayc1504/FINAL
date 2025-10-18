@@ -373,6 +373,35 @@
       });
     }
 
+    function rebookRide(bookingId) {
+      fetch('rebook_ride.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ booking_id: bookingId })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          // Update localStorage with new booking_id and reset status to Pending
+          const booking = JSON.parse(localStorage.getItem('Booking'));
+          booking.booking_id = data.new_booking_id;
+          booking.status = 'Pending';
+          localStorage.setItem('Booking', JSON.stringify(booking));
+          document.getElementById('status').innerText = 'Rebooking sent. Waiting for another driver...';
+        } else {
+          alert('Failed to rebook: ' + data.message);
+        }
+      })
+      .catch(error => {
+        console.error('Error rebooking:', error);
+        alert('Error rebooking.');
+      });
+    }
+
+    function cancelRebook() {
+      document.getElementById('status').innerText = 'Booking declined. You can book again if needed.';
+    }
+
     setInterval(() => {
       const booking = JSON.parse(localStorage.getItem('Booking'));
       if (booking && booking.booking_id) {
@@ -400,6 +429,10 @@
           message += `\nYou will need to pay ₱${booking.fare ? booking.fare : 'calculating...'}.`;
           // Add button to view active booking
           message += `<br><button onclick="window.location.href='active_booking.php'">View Active Booking</button>`;
+        } else if (booking.status === "Declined") {
+          message += `<br>Do you want to find another driver?`;
+          message += `<br><button onclick="rebookRide(${booking.booking_id})">Yes, find another driver</button>`;
+          message += `<button onclick="cancelRebook()">No, cancel</button>`;
         }
         document.getElementById('status').innerHTML = message;
       } else if (booking?.status === "Completed") {

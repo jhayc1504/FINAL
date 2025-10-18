@@ -172,6 +172,7 @@ if (!isset($_SESSION['email'])) {
                                     <p><strong>Student/SC/PWD Passengers:</strong> ${booking.number_student}</p>
                                     <p><strong>Estimated Fare:</strong> ₱${booking.estimatedFare}</p>
                                     <button onclick="acceptBooking(${booking.booking_id})">Accept</button>
+                                    <button onclick="declineBooking(${booking.booking_id})">Decline</button>
                                 </div>
                             `;
                         });
@@ -218,6 +219,28 @@ if (!isset($_SESSION['email'])) {
                         });
                     }
                 });
+        }
+
+        function declineBooking(bookingId) {
+            // Update status to Declined
+            fetch('update_booking_status.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ booking_id: bookingId, status: 'Declined' })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Booking declined!');
+                    loadPendingBookings(); // Reload the list to remove the declined booking
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error declining booking:', error);
+                alert('Error declining booking.');
+            });
         }
 
         // Load bookings on page load

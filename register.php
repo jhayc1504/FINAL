@@ -4,7 +4,6 @@ include 'config.php';
 session_start();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Input validation and sanitization
     $lastname = isset($_POST["lastname"]) ? trim($_POST["lastname"]) : "";
     $firstname = isset($_POST["firstname"]) ? trim($_POST["firstname"]) : "";
     $middlename = isset($_POST["middlename"]) ? trim($_POST["middlename"]) : "";
