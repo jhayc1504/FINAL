@@ -7,7 +7,7 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-$user_id = $_SESSION['user_id'];
+$user_id = $_SESSION['commuter_user_id'] ?? $_SESSION['user_id'];
 
 // Fetch the latest accepted booking for the user
 $sql = "SELECT b.*, CONCAT(u.firstname, ' ', u.lastname) as driver_name FROM bookings b LEFT JOIN users u ON b.driver_id = u.id WHERE b.commuter_id = ? AND b.status = 'Accepted' ORDER BY b.id DESC LIMIT 1";

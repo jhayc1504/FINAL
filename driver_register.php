@@ -140,9 +140,9 @@ function isActiveForm($formName, $activeForm) {
                 <H3>Sex</H3>
                 <select name="sex" id="sex" required>
                     <option value="select">Select an Option</option>
-                    <option value="male">Male</option>
-                    <option value="female">Female</option>
-                    <option value="pns">Prefer not to say</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Prefer not to say">Prefer not to say</option>
                 </select>
                 <H3>Address</H3>
                 <input type="text" name="Line1" placeholder="Address Line 1(House#, St.)" required>
